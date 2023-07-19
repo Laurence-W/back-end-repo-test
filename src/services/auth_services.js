@@ -31,3 +31,58 @@ function decryptObject(data){
     return JSON.parse(decryptString(data));
 }
 
+// ----- Hashing and Salting functionality ------
+// Salt rounds 
+const saltRounds = 10;
+
+// Function to add salt and hash given string
+async function hashString(stringToHash){
+    let saltToAdd = await bcrypt.genSalt(saltRounds);
+
+    return await bcrypt.hash(stringToHash, saltToAdd);
+}
+
+// compares unhashed data with hashed data and returns boolean
+async function validateHashedData(unhashedData, storedHashedData){
+    return await bcrypt.compare(unhashedData, storedHashedData);
+}
+
+// ------ JWT functionality ------
+
+// Generate JWT 
+function generateJWT(payloadObj){
+    return jwt.sign(payloadObj, process.env.JWT_SECRET, {expiresIn: "7d"});
+}
+
+// Encrypt payload and generate user specific JWT
+async function generateUserJWT(userDetails){
+    let encryptedUserData = encryptString(JSON.stringify(userDetails));
+
+    return generateJWT({data: encryptedUserData});
+}
+
+// Veryify userJWT and return new validated JWT
+async function verifyUserJWT(userJWT){
+    let userJwtVerified = jwt.verify(userJWT, process.env.JWT_SECRET, {complete: true});
+    let decryptedJwtPayload = decryptString(userJwtVerified.payload.data);
+    let userData = JSON.parse(decryptedJwtPayload);
+    let targetUser = await User.findById(userData.userID).exec();
+
+    if (targetUser.password === userData.password && targetUser.email === userData.email){
+        return generateJWT({data: userJwtVerified.payload.data});
+    } else {
+        throw new Error({message: "Invalid User Token"})
+    }
+}
+
+
+module.exports = {
+    encryptString, 
+    decryptString, 
+    decryptObject,
+    hashString,
+    validateHashedData,
+    generateJWT,
+    generateUserJWT,
+    verifyUserJWT
+}
