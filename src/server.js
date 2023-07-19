@@ -2,7 +2,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
 const app = express();
-const HOST = process.env.HOST || "localhost";
 const PORT = process.env.PORT || 5000;
 
 const helmet = require("helmet");
@@ -88,7 +87,6 @@ app.get("*", (request, response) => {
 });
 
 module.exports = {
-  HOST,
   PORT,
   app,
 };

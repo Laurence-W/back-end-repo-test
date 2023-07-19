@@ -1,6 +1,6 @@
-var { app, PORT, HOST } = require("./server");
+var { app, PORT } = require("./server");
 
-app.listen(PORT, HOST, () => {
+app.listen(PORT, () => {
   console.log(`
     Server running. Come run with us!
     `);
