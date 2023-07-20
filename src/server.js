@@ -18,7 +18,7 @@ app.use(
 
 const cors = require("cors");
 var corsOptions = {
-  origin: ["http://localhost:3000", "https://therunclub.netlify.app/"],
+  origin: ["http://localhost:5000", "https://therunclub.netlify.app/"],
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -70,6 +70,9 @@ app.get("/databaseHealth", (request, response) => {
     dbHost: databaseHost,
   });
 });
+
+const usersRoutes = require("./routes/UserRoutes");
+app.use("/users", usersRoutes);
 
 app.get("/", (request, response) => {
   response.json({
