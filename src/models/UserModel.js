@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  firstname: String,
-  lastname: String,
-  username: String,
-  email: String,
-  password: String,
+  firstName: {type: String, required: true},
+  lastName: {type: String, required: true},
+  username: {type: String, unique: true, required: true},
+  email: {type: String, unique: true, required: true},
+  password: {type: String, required: true, minLength: 8},
   isAdmin: Boolean,
   isTrainer: Boolean,
 });
@@ -14,4 +14,3 @@ const User = mongoose.model("User", UserSchema);
 
 module.exports = { User };
 
-//Early model without required, unique/validation.
