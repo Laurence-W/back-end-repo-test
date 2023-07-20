@@ -1,5 +1,6 @@
 // Import User model, to create functionality with them
 const {User} = require("../models/UserModel");
+const { hashString } = require("../services/auth_services");
 
 
 
@@ -24,4 +25,26 @@ const createUser = async (request, response) => {
     if (savedUser) {
         return response.status(422).json({message: "User already exists with email"});
     }
+
+    // Hash and salt password
+    let hashedPassword = hashString(password);
+
+    let user = new User({
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        password: hashedPassword
+    })
+
+    user.save().then((user) => {
+        response.json({message: "User saved successfully"})
+        console.log(user.email);
+    }).catch((error) => {
+        console.log(`Error occurred when saving user, error:\n` + error);
+    })
 }
+
+
+
+module.exports = createUser;
