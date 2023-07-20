@@ -27,17 +27,19 @@ const createUser = async (request, response) => {
     }
 
     // Hash and salt password
-    let hashedPassword = hashString(password);
+    let hashedPassword = await hashString(password);
 
     let user = new User({
         firstName: firstName,
         lastName: lastName,
         username: username,
         email: email,
-        password: hashedPassword
+        password: hashedPassword,
+        isAdmin: false,
+        isTrainer: false
     })
 
-    user.save().then((user) => {
+    await user.save().then((user) => {
         response.json({message: "User saved successfully"})
         console.log(user.email);
     }).catch((error) => {
@@ -47,4 +49,4 @@ const createUser = async (request, response) => {
 
 
 
-module.exports = createUser;
+module.exports = {createUser};
