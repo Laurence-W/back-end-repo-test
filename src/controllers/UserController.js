@@ -8,32 +8,15 @@ const { hashString } = require("../services/auth_services");
 
 // Sign up function 
 const createUser = async (request, response) => {
-    let {firstName, lastName, username, email} = request.body;
-
-    // Conditional check to ensure all fields have data
-    if (!firstName || !lastName || !username || !email || !password) {
-        return response.status(400).json({message: "Please enter in all fields"})
-    }
-
-    // Conditional check for password length
-    // if (password.length < 8) {
-    //     return response.status(400).json({message: "Password not long enough, please enter 8 or more characters"});
-    // }
-
-    // Conditional check to see if user exists within db
-    let savedUser = await User.findOne({email: email});
-    if (savedUser) {
-        return response.status(422).json({message: "User already exists with email"});
-    }
 
     // Hash and salt password
-    // let hashedPassword = await hashString(password);
+    let hashedPassword = await hashString(request.body.password);
 
     let user = new User({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
+        firstName: request.body.firstName,
+        lastName: request.body.lastName,
+        username: request.body.username,
+        email: request.body.email,
         password: hashedPassword,
         isAdmin: false,
         isTrainer: false
