@@ -1,6 +1,6 @@
 // Import User model, to create functionality with them
 const {User} = require("../models/UserModel");
-const { hashString } = require("../services/auth_services");
+const { hashString, generateUserJWT } = require("../services/auth_services");
 
 
 
@@ -22,8 +22,15 @@ const createUser = async (request, response) => {
         isTrainer: false
     })
 
+    // Generate JWT to send back to client for authentication in other parts of the application
+    let encryptedToken = await generateUserJWT({
+        userID: user.id,
+        username: user.username,
+        email: user.email
+    });
+
     await user.save().then((user) => {
-        response.json({message: "User saved successfully"})
+        response.json({message: "User saved successfully", token: encryptedToken});
         console.log(user.email);
     }).catch((error) => {
         console.log(`Error occurred when saving user, error:\n` + error);
